@@ -2,6 +2,11 @@
   "name": "chinesize",
   "version": "0.0.1",
   "description": "Convert English React/Angular/HTML project to Chinese",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cp3hnu/chinesize"
+  },
+  "bugs": "https://github.com/cp3hnu/chinesize/issues",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -10,6 +15,13 @@
   "bin": {
     "chinesize": "bin/chinesize.js"
   },
+  "keywords": [
+    "chinesize",
+    "angular",
+    "react",
+    "html",
+    "posthtml"
+  ],
   "author": "cp3hnu",
   "license": "ISC",
   "dependencies": {
@@ -17,5 +29,8 @@
     "commander": "^12.1.0",
     "posthtml": "^0.16.6",
     "prettier": "^3.3.3"
+  },
+  "engines": {
+    "node": ">=16"
   }
 }
