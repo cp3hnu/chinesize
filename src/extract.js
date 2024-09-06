@@ -29,7 +29,7 @@ function addTextsAndWrite(texts, outputFilePath) {
 /**
  * Scan directory recursively then extract English texts from html and ts files
  * @param {string} dir The directory of Angular project
- * @param {"html" | "ts"} type The file type
+ * @param {"html" | "js" | undefined} type The file type
  * @param {string} outputFilePath The path of the file where the extracted English texts will be written.
  * @param {string[]} texts The extracted English texts
  */
@@ -44,7 +44,9 @@ function extractDir(dir, type, outputFilePath, texts) {
       const filePath = path.join(dir, file);
       fs.stat(filePath, (err, stat) => {
         if (err) {
-          console.log(errorLog(`Error: Unable to retrieve ${filePath} file stats.`));
+          console.log(
+            errorLog(`Error: Unable to retrieve ${filePath} file stats.`)
+          );
           console.log(errorLog(err));
           return;
         }
@@ -52,9 +54,13 @@ function extractDir(dir, type, outputFilePath, texts) {
           // Read subdirectories recursively
           extractDir(filePath, type, outputFilePath, texts);
         } else {
-          if (path.extname(filePath) === ".html" && type === "html") {
+          const extname = path.extname(filePath);
+          if (extname === ".html" && (type === undefined || type === "html")) {
             extractHtml(filePath, addTextsAndWrite(texts, outputFilePath));
-          } else if (path.extname(filePath) === ".ts" && type === "ts") {
+          } else if (
+            (extname === ".js" || extname === ".ts") &&
+            (type === undefined || type === "js")
+          ) {
             extractTs(filePath, addTextsAndWrite(texts, outputFilePath));
           }
         }
@@ -66,7 +72,7 @@ function extractDir(dir, type, outputFilePath, texts) {
 /**
  * Extract English texts of Angular project
  * @param {string} dir The directory of Angular project
- * @param {"html" | "ts"} type the file type
+ * @param {"html" | "js" | undefined} type the file type
  * @param {string} output The path of the file where the extracted English texts will be written
  */
 export function extract(dir, type, output) {
@@ -80,9 +86,11 @@ export function extract(dir, type, output) {
       return;
     }
 
+    const defaultFileName = type
+      ? "texts-to-translate-" + type + ".json"
+      : "texts-to-translate.json";
     const outputFilePath =
-      output ||
-      path.join(dir, "chinesize", "texts-to-translate-" + type + ".json");
+      output || path.join(dir, "chinesize", defaultFileName);
     const outputDir = path.dirname(outputFilePath);
 
     // Create output directory

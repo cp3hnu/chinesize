@@ -17,8 +17,8 @@ program
   .argument('<dir>', 'directory of Angular project')
   .addOption(
     new Option('-t, --type <type>', 'file type')
-      .choices(['html', 'ts'])
-      .makeOptionMandatory(true)
+      .choices(['html', 'js'])
+      .makeOptionMandatory(false)
   )
   .option('-o, --output <filePath>', 'path of file for writing the extracted English text')
   .action((dir, options) => {
@@ -32,8 +32,8 @@ program
   .argument('<dir>', 'directory of Angular project')
   .addOption(
     new Option('-t, --type <type>', 'file type')
-      .choices(['html', 'ts'])
-      .makeOptionMandatory(true)
+      .choices(['html', 'js'])
+      .makeOptionMandatory(false)
   )
   .option('-i, --input <filePath>', 'path of file for reading the Chinese text')
   .option('-p, --prettier-config <configFilePath>', 'path of config file for prettier')
