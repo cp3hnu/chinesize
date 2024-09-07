@@ -6,6 +6,7 @@
     "type": "git",
     "url": "https://github.com/cp3hnu/chinesize"
   },
+  "homepage": "https://github.com/cp3hnu/chinesize#readme",
   "bugs": "https://github.com/cp3hnu/chinesize/issues",
   "main": "index.js",
   "type": "module",

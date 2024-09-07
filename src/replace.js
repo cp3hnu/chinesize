@@ -84,10 +84,16 @@ export function replace(dir, type, input, prettierConfig) {
   }
 
   const data = fs.readFileSync(inputFilePath, "utf-8");
-  const translations = JSON.parse(data);
-  if (prettierConfig && !fs.existsSync(prettierConfig)) {
-    console.log(errorLog(`Error: "${prettierConfig}" is not exists`));
-    return;
+  try {
+    const translations = JSON.parse(data);
+    if (prettierConfig && !fs.existsSync(prettierConfig)) {
+      console.log(errorLog(`Error: "${prettierConfig}" is not exists`));
+      return;
+    }
+    
+    replaceDir(dir, type, translations, prettierConfig);
+  } catch (err) {
+    console.log(errorLog(`Error: "${inputFilePath}" is not a valid JSON`));
+    console.log(errorLog(err));
   }
-  replaceDir(dir, type, translations, prettierConfig);
 }

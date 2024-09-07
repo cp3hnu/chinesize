@@ -76,29 +76,28 @@ function extractDir(dir, type, outputFilePath, texts) {
  * @param {string} output The path of the file where the extracted English texts will be written
  */
 export function extract(dir, type, output) {
-  fs.stat(dir, (err, stat) => {
-    if (err) {
-      console.log(errorLog(`Error: "${dir}" is not exists`));
-      return;
-    }
-    if (!stat.isDirectory()) {
-      console.log(errorLog(`Error: "${dir}" is not a directory`));
-      return;
-    }
+  if (!fs.existsSync(dir)) {
+    console.log(errorLog(`Error: "${dir}" is not exists`));
+    return;
+  }
 
-    const defaultFileName = type
-      ? "texts-to-translate-" + type + ".json"
-      : "texts-to-translate.json";
-    const outputFilePath =
-      output || path.join(dir, "chinesize", defaultFileName);
-    const outputDir = path.dirname(outputFilePath);
+  const dirStat = fs.statSync(dir);
+  if (!dirStat.isDirectory()) {
+    console.log(errorLog(`Error: "${dir}" is not a directory`));
+    return;
+  }
 
-    // Create output directory
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
-    }
+  const defaultFileName = type
+    ? "texts-to-translate-" + type + ".json"
+    : "texts-to-translate.json";
+  const outputFilePath = output || path.join(dir, "chinesize", defaultFileName);
+  const outputDir = path.dirname(outputFilePath);
 
-    const texts = [];
-    extractDir(dir, type, outputFilePath, texts);
-  });
+  // Create output directory
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+
+  const texts = [];
+  extractDir(dir, type, outputFilePath, texts);
 }
