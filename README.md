@@ -1,5 +1,5 @@
 # chinesize
-汉化 HTML、Angular、React 项目 
+汉化 HTML、Angular 项目 
 
 ## 安装
 
