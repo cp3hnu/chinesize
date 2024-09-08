@@ -1,5 +1,5 @@
 # chinesize
-汉化 HTML、Angular 项目 
+一个汉化 HTML、Angular 项目的工具
 
 ## 安装
 
@@ -52,8 +52,8 @@ Options:
 `extract` 有 1 个参数和 2 个选项：
 
 - `dir`：汉化的 Angular 项目目录
-- ` --type <type>`：要转换的文件类型，html 文件还是 js 文件（也支持 ts 文件），如果没有提供，则同时转换两者
-- `--output <filePath>`：输出文件路径，提取的英文文本将写入这个文件，如果没有提供，默认是 Angular 项目目录下的 `chinesize/texts-to-translate-{html|ts}.json'` 文件
+- ` --type <type>`：要转换的文件类型，是 `html` 文件还是 `js/ts` 文件。如果没有提供，则同时转换两者
+- `--output <filePath>`：输出文件路径，提取的英文文本将写入这个文件。如果没有提供，默认是 Angular 项目目录下的 `chinesize/texts-to-translate-{html|ts}.json'` 文件
 
 比如要转换 [`tensorboard`](https://github.com/tensorflow/tensorboard) 项目
 
@@ -122,9 +122,9 @@ Options:
 `replace` 有 1 个参数和 3 个选项：
 
 - `dir`：汉化的 Angular 项目目录
-- ` --type <type>`：要转换的文件类型，html 文件还是 js 文件（也支持 ts 文件），如果没有提供，则同时转换两者
-- `--input <filePath>`：中英文翻译的文件路径，如果没有提供，默认是 `extract` 生成的文件路径
-- `--prettier-config <configFilePath>`：`prettier` 配置文件路径，如果没有提供，则不使用 `prettier` 格式化代码
+- ` --type <type>`：要转换的文件类型，是 `html` 文件还是 `js/ts` 文件。如果没有提供，则同时转换两者
+- `--input <filePath>`：中英文翻译的文件路径。如果没有提供，默认是 `extract` 生成的文件路径
+- `--prettier-config <configFilePath>`：`prettier` 配置文件路径。如果没有提供，则不使用 `prettier` 格式化代码
 
 比如要转换 [`tensorboard`](https://github.com/tensorflow/tensorboard) 项目
 
@@ -135,6 +135,25 @@ $ chinesize replace ~/Documents/tensorboard -i ~/Documents/tensorboard/translate
 实现效果（节选）
 
 ![](./screenshot/chinesize-result.png)
+
+## 不足之处
+
+该工具只能转换 HTML 静态文本、`title/label` 属性中的纯文本，不能转换变量值和插值，因为变量值可能不只是用于展示还用于代码逻辑，比如
+
+```js
+let type = ""
+
+// type 的代码逻辑
+if (type === "") {
+  // ...
+}
+
+class MyElement {
+  static readonly template = html`
+    <span>{{ type }}</span>
+  `;
+}
+```
 
 ## Blog
 
