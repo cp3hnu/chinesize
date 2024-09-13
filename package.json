@@ -1,6 +1,6 @@
 {
   "name": "chinesize",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Convert English React/Angular/HTML project to Chinese",
   "repository": {
     "type": "git",
