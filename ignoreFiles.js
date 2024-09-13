@@ -56,6 +56,6 @@ export function addIgnoreFromFile(input) {
 }
 
 export function shouldIgnore(path) {
-  const matched = matchers.length ? mm.isMatch(path, matchers, { dot:true }) : false;
+  const matched = matchers.length ? mm.isMatch(path, matchers, { dot: true }) : false;
   return matched;
 }

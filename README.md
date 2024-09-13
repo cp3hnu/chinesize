@@ -44,21 +44,25 @@ Arguments:
   dir                      directory of Angular project
 
 Options:
-  -t, --type <type>        file type (choices: "html", "js")
-  -o, --output <filePath>  path of file for writing the extracted English text
-  -h, --help               display help for command
+  -t, --type <type>               file type (choices: "html", "js")
+  -o, --output <filePath>         path of file for writing the extracted English text
+  --ignore-pattern <glob...>      ignore files that match a provided glob expression
+  --ignore-config <filePath...>   ignore files if they match patterns sourced from a configuration file (e.g. a .gitignore)
+  -h, --help                      display help for command
 ```
 
-`extract` 有 1 个参数和 2 个选项：
+`extract` 有 1 个参数和 4 个选项：
 
 - `dir`：汉化的 Angular 项目目录
 - ` --type <type>`：要转换的文件类型，是 `html` 文件还是 `js/ts` 文件。如果没有提供，则同时转换两者
-- `--output <filePath>`：输出文件路径，提取的英文文本将写入这个文件。如果没有提供，默认是 Angular 项目目录下的 `chinesize/texts-to-translate-{html|ts}.json'` 文件
+- `--output <filePath>`：输出文件路径，提取的英文文本将写入这个文件。如果没有提供，默认是 Angular 项目目录下的 `chinesize/texts-to-translate-{html|js}.json'` 文件
+- `--ignore-pattern <glob...>`：忽略 `glob` 表达式匹配的文件，使用 [`micromatch`](https://github.com/micromatch/micromatch) 进行匹配
+- `--ignore-config <filePath...>`：忽略与配置文件中的模式匹配的文件，使用 [`micromatch`](https://github.com/micromatch/micromatch) 进行匹配
 
 比如要转换 [`tensorboard`](https://github.com/tensorflow/tensorboard) 项目
 
 ```sh
-$ chinesize extract ~/Documents/tensorboard
+$ chinesize extract ~/Documents/tensorboard --ignore-config ~/Documents/tensorboard/.gitignore
 ```
 
 将 `tensorboard` 里的英文文本提取到 `~/Documents/tensorboard/chinesize/texts-to-translate.json`
@@ -115,21 +119,25 @@ Arguments:
 Options:
   -t, --type <type>                       file type (choices: "html", "js")
   -i, --input <filePath>                  path of file for reading the Chinese text
-  -p, --prettier-config <configFilePath>  path of config file for prettier
+  -p, --prettier-config <filePath>        path of config file for prettier
+  --ignore-pattern <glob...>              ignore files that match a provided glob expression
+  --ignore-config <filePath...>           ignore files if they match patterns sourced from a configuration file (e.g. a .gitignore)
   -h, --help                              display help for command
 ```
 
-`replace` 有 1 个参数和 3 个选项：
+`replace` 有 1 个参数和 5 个选项：
 
 - `dir`：汉化的 Angular 项目目录
 - ` --type <type>`：要转换的文件类型，是 `html` 文件还是 `js/ts` 文件。如果没有提供，则同时转换两者
 - `--input <filePath>`：中英文翻译的文件路径。如果没有提供，默认是 `extract` 生成的文件路径
-- `--prettier-config <configFilePath>`：`prettier` 配置文件路径。如果没有提供，则不使用 `prettier` 格式化代码
+- `--prettier-config <filePath>`：`prettier` 配置文件路径。如果没有提供，则不使用 `prettier` 格式化代码
+- `--ignore-pattern <glob...>`：忽略 `glob` 表达式匹配的文件，使用 [`micromatch`](https://github.com/micromatch/micromatch) 进行匹配
+- `--ignore-config <filePath...>`：忽略与配置文件中的模式匹配的文件，使用 [`micromatch`](https://github.com/micromatch/micromatch) 进行匹配
 
 比如要转换 [`tensorboard`](https://github.com/tensorflow/tensorboard) 项目
 
 ```sh
-$ chinesize replace ~/Documents/tensorboard -i ~/Documents/tensorboard/translated-texts.json -p ~/Documents/tensorboard/.prettierrc.json
+$ chinesize replace ~/Documents/tensorboard -i ~/Documents/tensorboard/translated-texts.json -p ~/Documents/tensorboard/.prettierrc.json --ignore-config ~/Documents/tensorboard/.gitignore
 ```
 
 实现效果（节选）
