@@ -21,8 +21,10 @@ program
       .makeOptionMandatory(false)
   )
   .option('-o, --output <filePath>', 'path of file for writing the extracted English text')
+  .option('--ignore-pattern <glob...>', 'ignore files that match a provided glob expression')
+  .option('--ignore-config <file...>', 'ignore files if they match patterns sourced from a configuration file (e.g. a .gitignore)')
   .action((dir, options) => {
-    extract(dir, options.type, options.output);
+    extract(dir, options.type, options.output, options.ignorePattern, options.ignoreConfig);
   });
 
 program
@@ -37,8 +39,10 @@ program
   )
   .option('-i, --input <filePath>', 'path of file for reading the Chinese text')
   .option('-p, --prettier-config <configFilePath>', 'path of config file for prettier')
+  .option('--ignore-pattern <glob...>', 'ignore files that match a provided glob expression')
+  .option('--ignore-config <file...>', 'ignore files if they match patterns sourced from a configuration file (e.g. a .gitignore)')
   .action((dir, options) => {
-    replace(dir, options.type, options.input, options.prettierConfig);
+    replace(dir, options.type, options.input, options.prettierConfig, options.ignorePattern, options.ignoreConfig);
   });
 
 program.parse();

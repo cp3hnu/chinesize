@@ -3,6 +3,8 @@ import path from "node:path";
 import extractHtml from "./extractHtml.js";
 import extractTs from "./extractTs.js";
 import { errorLog } from "./utils.js";
+import { addIgnoreFromInput, addIgnoreFromFile, shouldIgnore } from "../ignoreFiles.js";
+
 
 /**
  * Appends the given file texts to the provided texts array and writes the combined texts to a file.
@@ -50,6 +52,12 @@ function extractDir(dir, type, outputFilePath, texts) {
           console.log(errorLog(err));
           return;
         }
+
+        if (shouldIgnore(filePath)) {
+          // console.log("ignore", filePath);
+          return;
+        }
+
         if (stat.isDirectory()) {
           // Read subdirectories recursively
           extractDir(filePath, type, outputFilePath, texts);
@@ -74,8 +82,10 @@ function extractDir(dir, type, outputFilePath, texts) {
  * @param {string} dir The directory of Angular project
  * @param {"html" | "js" | undefined} type the file type
  * @param {string} output The path of the file where the extracted English texts will be written
+ * @param {string} ignorePattern The pattern of files that should be ignored
+ * @param {string} ignoreConfigFile The path of config file for ignore
  */
-export function extract(dir, type, output) {
+export function extract(dir, type, output, ignorePattern, ignoreConfigFile) {
   if (!fs.existsSync(dir)) {
     console.log(errorLog(`Error: "${dir}" is not exists`));
     return;
@@ -98,6 +108,15 @@ export function extract(dir, type, output) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
 
+  // Add ignore patterns
+  if (ignorePattern) {
+    addIgnoreFromInput(ignorePattern);
+  }
+
+  // Add ignore config file
+  if (ignoreConfigFile) {
+    addIgnoreFromFile(ignoreConfigFile);
+  }
   const texts = [];
   extractDir(dir, type, outputFilePath, texts);
 }

@@ -29,6 +29,10 @@ function replaceDir(dir, type, translations, prettierConfig) {
           console.log(errorLog(err));
           return;
         }
+        if (shouldIgnore(filePath)) {
+          return;
+        }
+
         if (stat.isDirectory()) {
           // Read subdirectories recursively
           replaceDir(filePath, type, translations, prettierConfig);
@@ -54,8 +58,10 @@ function replaceDir(dir, type, translations, prettierConfig) {
  * @param {"html" | "js" | undefined} type the file type
  * @param {string} input The path of file for reading the Chinese text
  * @param {string | undefined} prettierConfig The path of config file for prettier
+ * @param {string} ignorePattern The pattern of files that should be ignored
+ * @param {string} ignoreConfigFile The path of config file for ignore
  */
-export function replace(dir, type, input, prettierConfig) {
+export function replace(dir, type, input, prettierConfig, ignorePattern, ignoreConfigFile) {
   if (!fs.existsSync(dir)) {
     console.log(errorLog(`Error: "${dir}" is not exists`));
     return;
@@ -91,6 +97,16 @@ export function replace(dir, type, input, prettierConfig) {
       return;
     }
     
+    // Add ignore patterns
+    if (ignorePattern) {
+      addIgnoreFromInput(ignorePattern);
+    }
+
+    // Add ignore config file
+    if (ignoreConfigFile) {
+      addIgnoreFromFile(ignoreConfigFile);
+    }
+
     replaceDir(dir, type, translations, prettierConfig);
   } catch (err) {
     console.log(errorLog(`Error: "${inputFilePath}" is not a valid JSON`));
