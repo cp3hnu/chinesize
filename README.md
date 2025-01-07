@@ -41,14 +41,14 @@ Usage: chinesize extract <dir> [options]
 Extract English texts of Angular project
 
 Arguments:
-  dir                      directory of Angular project
+  dir                            directory of Angular project
 
 Options:
-  -t, --type <type>               file type (choices: "html", "js")
-  -o, --output <filePath>         path of file for writing the extracted English text
-  --ignore-pattern <glob...>      ignore files that match a provided glob expression
-  --ignore-config <filePath...>   ignore files if they match patterns sourced from a configuration file (e.g. a .gitignore)
-  -h, --help                      display help for command
+  -t, --type <type>              file type (choices: "html", "js")
+  -o, --output <filePath>        path of file for writing the extracted English text
+  --ignore-pattern <glob...>     ignore files that match a provided glob expression
+  --ignore-config <filePath...>  ignore files if they match patterns sourced from a configuration file (e.g. a .gitignore)
+  -h, --help                     display help for command
 ```
 
 `extract` 有 1 个参数和 4 个选项：
@@ -114,15 +114,15 @@ Usage: chinesize replace <dir> [options]
 Replace English texts of Angular project to Chinese
 
 Arguments:
-  dir                                     directory of Angular project
+  dir                               directory of Angular project
 
 Options:
-  -t, --type <type>                       file type (choices: "html", "js")
-  -i, --input <filePath>                  path of file for reading the Chinese text
-  -p, --prettier-config <filePath>        path of config file for prettier
-  --ignore-pattern <glob...>              ignore files that match a provided glob expression
-  --ignore-config <filePath...>           ignore files if they match patterns sourced from a configuration file (e.g. a .gitignore)
-  -h, --help                              display help for command
+  -t, --type <type>                 file type (choices: "html", "js")
+  -i, --input <filePath>            path of file for reading the Chinese text
+  -p, --prettier-config <filePath>  path of config file for prettier
+  --ignore-pattern <glob...>        ignore files that match a provided glob expression
+  --ignore-config <filePath...>     ignore files if they match patterns sourced from a configuration file (e.g. a .gitignore)
+  -h, --help                        display help for command
 ```
 
 `replace` 有 1 个参数和 5 个选项：

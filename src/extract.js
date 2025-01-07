@@ -3,29 +3,53 @@ import path from "node:path";
 import extractHtml from "./extractHtml.js";
 import extractTs from "./extractTs.js";
 import { errorLog } from "./utils.js";
-import { addIgnoreFromInput, addIgnoreFromFile, shouldIgnore } from "../ignoreFiles.js";
-
+import { addIgnoreFromInput, addIgnoreFromFile, shouldIgnore, resetIgnore } from "./ignoreFiles.js";
 
 /**
- * Appends the given file texts to the provided texts array and writes the combined texts to a file.
- *
- * @param {array} texts - The array of texts to be written to the file.
- * @param {string} outputFilePath - The path of the file where the extracted English texts will be written.
- * @return {(error: any | undefined, fileTexts: string[] | undefined) => void} A callback function that takes error and file texts as parameters.
+ * Extract English texts of Angular project
+ * @param {string} dir The directory of Angular project
+ * @param {"html" | "js" | undefined} type the file type
+ * @param {string} output The path of the file where the extracted English texts will be written
+ * @param {string} ignorePattern The pattern of files that should be ignored
+ * @param {string} ignoreConfigFile The path of config file for ignore
  */
-function addTextsAndWrite(texts, outputFilePath) {
-  return (err, fileTexts) => {
-    if (!err && fileTexts && fileTexts.length > 0) {
-      texts.push(...fileTexts);
-      // FIXME: write texts to file only once
-      const jsonObj = texts.reduce((obj, text) => {
-        obj[text] = text;
-        return obj;
-      }, {});
-      const str = JSON.stringify(jsonObj, null, 2);
-      fs.writeFileSync(outputFilePath, str);
-    }
-  };
+export function extract(dir, type, output, ignorePattern, ignoreConfigFile) {
+  if (!fs.existsSync(dir)) {
+    console.log(errorLog(`Error: "${dir}" is not exists`));
+    return;
+  }
+
+  const dirStat = fs.statSync(dir);
+  if (!dirStat.isDirectory()) {
+    console.log(errorLog(`Error: "${dir}" is not a directory`));
+    return;
+  }
+
+  const defaultFileName = type
+    ? "texts-to-translate-" + type + ".json"
+    : "texts-to-translate.json";
+  const outputFilePath = output || path.join(dir, "chinesize", defaultFileName);
+  const outputDir = path.dirname(outputFilePath);
+
+  // Create output directory
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+
+  // Reset ignore patterns
+  resetIgnore();
+
+  // Add ignore patterns
+  if (ignorePattern) {
+    addIgnoreFromInput(ignorePattern);
+  }
+
+  // Add ignore config file
+  if (ignoreConfigFile) {
+    addIgnoreFromFile(ignoreConfigFile);
+  }
+  const texts = [];
+  extractDir(dir, type, outputFilePath, texts);
 }
 
 /**
@@ -78,45 +102,23 @@ function extractDir(dir, type, outputFilePath, texts) {
 }
 
 /**
- * Extract English texts of Angular project
- * @param {string} dir The directory of Angular project
- * @param {"html" | "js" | undefined} type the file type
- * @param {string} output The path of the file where the extracted English texts will be written
- * @param {string} ignorePattern The pattern of files that should be ignored
- * @param {string} ignoreConfigFile The path of config file for ignore
+ * Appends the given file texts to the provided texts array and writes the combined texts to a file.
+ *
+ * @param {array} texts - The array of texts to be written to the file.
+ * @param {string} outputFilePath - The path of the file where the extracted English texts will be written.
+ * @return {(error: any | undefined, fileTexts: string[] | undefined) => void} A callback function that takes error and file texts as parameters.
  */
-export function extract(dir, type, output, ignorePattern, ignoreConfigFile) {
-  if (!fs.existsSync(dir)) {
-    console.log(errorLog(`Error: "${dir}" is not exists`));
-    return;
-  }
-
-  const dirStat = fs.statSync(dir);
-  if (!dirStat.isDirectory()) {
-    console.log(errorLog(`Error: "${dir}" is not a directory`));
-    return;
-  }
-
-  const defaultFileName = type
-    ? "texts-to-translate-" + type + ".json"
-    : "texts-to-translate.json";
-  const outputFilePath = output || path.join(dir, "chinesize", defaultFileName);
-  const outputDir = path.dirname(outputFilePath);
-
-  // Create output directory
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
-  }
-
-  // Add ignore patterns
-  if (ignorePattern) {
-    addIgnoreFromInput(ignorePattern);
-  }
-
-  // Add ignore config file
-  if (ignoreConfigFile) {
-    addIgnoreFromFile(ignoreConfigFile);
-  }
-  const texts = [];
-  extractDir(dir, type, outputFilePath, texts);
+function addTextsAndWrite(texts, outputFilePath) {
+  return (err, fileTexts) => {
+    if (!err && fileTexts && fileTexts.length > 0) {
+      texts.push(...fileTexts);
+      // FIXME: write texts to file only once
+      const jsonObj = texts.reduce((obj, text) => {
+        obj[text] = text;
+        return obj;
+      }, {});
+      const str = JSON.stringify(jsonObj, null, 2);
+      fs.writeFileSync(outputFilePath, str);
+    }
+  };
 }

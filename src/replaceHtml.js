@@ -5,43 +5,6 @@ import * as prettier from "prettier";
 import { errorLog } from "./utils.js";
 
 /**
- * Replaces English text in a given tree with translations.
- *
- * @param {object} translations - An object containing translations for English text.
- * @return {function} A function that takes a tree and replaces English text with translations.
- */
-function replaceEnglishText(translations) {
-  return (tree) => {
-    tree.match({ tag: /\b(?!style\b)(?!script\b)(?!code\b)(?!pre\b)\w+\b/ }, (node) => {
-      const content = node.content;
-      // Texts
-      if (Array.isArray(content)) {
-        node.content = content.map((item) => {
-          if (typeof item === 'string') {
-            const text = item.trim();
-            if (text && translations[text]) {
-              return translations[text];
-            }
-          }
-          return item;
-        })
-      }
-      // Title property
-      if (node.attrs && node.attrs.title) {
-        if (typeof node.attrs.title === 'string') {
-          const text = node.attrs.title.trim();
-          if (text && translations[text]) {
-            node.attrs.title = translations[text];
-          }
-        }
-        
-      }
-      return node;
-    });
-  };
-}
-
-/**
  * Replaces English text in an HTML file with translations.
  *
  * @param {string} filePath - The path to the HTML file to process.
@@ -79,4 +42,41 @@ export default function repalceHtml(filePath, translations, prettierConfig) {
     console.log(errorLog(`Error: Processing ${filePath} file.`));
     console.log(errorLog(error));
   });
+}
+
+/**
+ * Replaces English text in a given tree with translations.
+ *
+ * @param {object} translations - An object containing translations for English text.
+ * @return {function} A function that takes a tree and replaces English text with translations.
+ */
+function replaceEnglishText(translations) {
+  return (tree) => {
+    tree.match({ tag: /\b(?!style\b)(?!script\b)(?!code\b)(?!pre\b)\w+\b/ }, (node) => {
+      const content = node.content;
+      // Texts
+      if (Array.isArray(content)) {
+        node.content = content.map((item) => {
+          if (typeof item === 'string') {
+            const text = item.trim();
+            if (text && translations[text]) {
+              return translations[text];
+            }
+          }
+          return item;
+        })
+      }
+      // Title property
+      if (node.attrs && node.attrs.title) {
+        if (typeof node.attrs.title === 'string') {
+          const text = node.attrs.title.trim();
+          if (text && translations[text]) {
+            node.attrs.title = translations[text];
+          }
+        }
+        
+      }
+      return node;
+    });
+  };
 }

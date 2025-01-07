@@ -59,3 +59,7 @@ export function shouldIgnore(path) {
   const matched = matchers.length ? mm.isMatch(path, matchers, { dot: true }) : false;
   return matched;
 }
+
+export function resetIgnore() {
+  matchers.length = 0;
+}

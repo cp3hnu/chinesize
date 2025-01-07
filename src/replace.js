@@ -3,6 +3,72 @@ import path from "node:path";
 import replaceHtml from "./replaceHtml.js";
 import replaceTs from "./replaceTs.js";
 import { errorLog } from "./utils.js";
+import { addIgnoreFromInput, addIgnoreFromFile, shouldIgnore, resetIgnore } from "./ignoreFiles.js";
+
+/**
+ * Replace English texts of Angular project to Chinese
+ * @param {string} dir The directory of Angular project
+ * @param {"html" | "js" | undefined} type the file type
+ * @param {string} input The path of file for reading the Chinese text
+ * @param {string | undefined} prettierConfig The path of config file for prettier
+ * @param {string} ignorePattern The pattern of files that should be ignored
+ * @param {string} ignoreConfigFile The path of config file for ignore
+ */
+export function replace(dir, type, input, prettierConfig, ignorePattern, ignoreConfigFile) {
+  if (!fs.existsSync(dir)) {
+    console.log(errorLog(`Error: "${dir}" is not exists`));
+    return;
+  }
+
+  const dirStat = fs.statSync(dir);
+  if (!dirStat.isDirectory()) {
+    console.log(errorLog(`Error: "${dir}" is not a directory`));
+    return;
+  }
+
+  const defaultFileName = type
+    ? "texts-to-translate-" + type + ".json"
+    : "texts-to-translate.json";
+  const inputFilePath = input || path.join(dir, "chinesize", defaultFileName);
+
+  if (prettierConfig && !fs.existsSync(prettierConfig)) {
+    console.log(errorLog(`Error: "${prettierConfig}" is not exists`));
+    return;
+  }
+
+  // Reset ignore patterns
+  resetIgnore();
+  
+  // Add ignore patterns
+  if (ignorePattern) {
+    addIgnoreFromInput(ignorePattern);
+  }
+
+  // Add ignore config file
+  if (ignoreConfigFile) {
+    addIgnoreFromFile(ignoreConfigFile);
+  }
+
+  if (!fs.existsSync(inputFilePath)) {
+    console.log(errorLog(`Error: "${inputFilePath}" is not exists`));
+    return;
+  }
+
+  const fileStat = fs.statSync(inputFilePath);
+  if (!fileStat.isFile()) {
+    console.log(errorLog(`Error: "${inputFilePath}" is not a file`));
+    return;
+  }
+  
+  try {
+    const data = fs.readFileSync(inputFilePath, "utf-8");
+    const translations = JSON.parse(data);
+    replaceDir(dir, type, translations, prettierConfig);
+  } catch (err) {
+    console.log(errorLog(`Error: "${inputFilePath}" is not a valid JSON`));
+    console.log(errorLog(err));
+  }
+}
 
 /**
  * Recursively replaces English texts in a directory with translations.
@@ -50,66 +116,4 @@ function replaceDir(dir, type, translations, prettierConfig) {
       });
     });
   });
-}
-
-/**
- * Replace English texts of Angular project to Chinese
- * @param {string} dir The directory of Angular project
- * @param {"html" | "js" | undefined} type the file type
- * @param {string} input The path of file for reading the Chinese text
- * @param {string | undefined} prettierConfig The path of config file for prettier
- * @param {string} ignorePattern The pattern of files that should be ignored
- * @param {string} ignoreConfigFile The path of config file for ignore
- */
-export function replace(dir, type, input, prettierConfig, ignorePattern, ignoreConfigFile) {
-  if (!fs.existsSync(dir)) {
-    console.log(errorLog(`Error: "${dir}" is not exists`));
-    return;
-  }
-
-  const dirStat = fs.statSync(dir);
-  if (!dirStat.isDirectory()) {
-    console.log(errorLog(`Error: "${dir}" is not a directory`));
-    return;
-  }
-
-  const defaultFileName = type
-    ? "texts-to-translate-" + type + ".json"
-    : "texts-to-translate.json";
-  const inputFilePath = input || path.join(dir, "chinesize", defaultFileName);
-
-  if (!fs.existsSync(inputFilePath)) {
-    console.log(errorLog(`Error: "${inputFilePath}" is not exists`));
-    return;
-  }
-
-  const fileStat = fs.statSync(inputFilePath);
-  if (!fileStat.isFile()) {
-    console.log(errorLog(`Error: "${inputFilePath}" is not a file`));
-    return;
-  }
-
-  const data = fs.readFileSync(inputFilePath, "utf-8");
-  try {
-    const translations = JSON.parse(data);
-    if (prettierConfig && !fs.existsSync(prettierConfig)) {
-      console.log(errorLog(`Error: "${prettierConfig}" is not exists`));
-      return;
-    }
-    
-    // Add ignore patterns
-    if (ignorePattern) {
-      addIgnoreFromInput(ignorePattern);
-    }
-
-    // Add ignore config file
-    if (ignoreConfigFile) {
-      addIgnoreFromFile(ignoreConfigFile);
-    }
-
-    replaceDir(dir, type, translations, prettierConfig);
-  } catch (err) {
-    console.log(errorLog(`Error: "${inputFilePath}" is not a valid JSON`));
-    console.log(errorLog(err));
-  }
 }

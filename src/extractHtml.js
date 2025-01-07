@@ -3,24 +3,24 @@ import fs from 'node:fs';
 import { errorLog } from "./utils.js";
 
 /**
- * Format the text
- * @param {string} text The extracted text
- * @returns {string} The formatted text
+ * Processing the html file
+ * @param {string} filePath The path of the html file
+ * @param {(error: any | undefined, texts: string[] | undefined) => void} callback The callback function that returns the extracted English text
  */
-function formatText(text) {
-  if (typeof text === 'string') {
-    const trimText = text.trim();
-    if (trimText) {
-      // Remove comments and interpolated text
-      const isInterpolation = trimText.startsWith('{{') && trimText.endsWith('}}');
-      const isComment = trimText.startsWith("<!--")
-      if (!isInterpolation && !isComment) {
-        return trimText
-      }
-    }
-  }
-
-  return undefined;
+export default function extractHtml(filePath, callback) {
+  const html = fs.readFileSync(filePath, 'utf-8');
+  const texts = [];
+  posthtml([extractEnglishText(texts)])
+  .process(html)
+  .then((result) => {
+    // console.log('Extracted file: ', filePath);
+    callback(undefined, texts);
+  })
+  .catch((error) => {
+    console.log(errorLog(`Error: Processing ${filePath} file.`));
+    console.log(errorLog(error));
+    callback(error, undefined);
+  });
 }
 
 /**
@@ -52,23 +52,23 @@ function extractEnglishText(texts) {
 }
 
 /**
- * Processing the html file
- * @param {string} filePath The path of the html file
- * @param {(error: any | undefined, texts: string[] | undefined) => void} callback The callback function that returns the extracted English text
+ * Format the text
+ * @param {string} text The extracted text
+ * @returns {string} The formatted text
  */
-export default function extractHtml(filePath, callback) {
-  const html = fs.readFileSync(filePath, 'utf-8');
-  const texts = [];
-  posthtml([extractEnglishText(texts)])
-  .process(html)
-  .then((result) => {
-    // console.log('Extracted file: ', filePath);
-    callback(undefined, texts);
-  })
-  .catch((error) => {
-    console.log(errorLog(`Error: Processing ${filePath} file.`));
-    console.log(errorLog(error));
-    callback(error, undefined);
-  });
+function formatText(text) {
+  if (typeof text === 'string') {
+    const trimText = text.trim();
+    if (trimText) {
+      // Remove comments and interpolated text
+      const isInterpolation = trimText.startsWith('{{') && trimText.endsWith('}}');
+      const isComment = trimText.startsWith("<!--")
+      if (!isInterpolation && !isComment) {
+        return trimText
+      }
+    }
+  }
+
+  return undefined;
 }
 
