@@ -7,7 +7,7 @@ const program = new Command();
 program
   .name('chinesize')
   .description('CLI to convert English React/Angular project to Chinese')
-  .version('1.0.0');
+  .version('1.0.1');
 
 program
   .command('extract')
