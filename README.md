@@ -1,5 +1,5 @@
 # chinesize
-一个汉化 React、Angular、HTML 模板文本的工具
+一个汉化 React、Angular 项目工具
 
 ## 安装
 
