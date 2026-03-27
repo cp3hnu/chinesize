@@ -26,7 +26,9 @@ function visit(dir, files) {
   let names = [];
   try {
     names = fs.readdirSync(dir);
-  } catch {
+  } catch (err) {
+    console.log(errorLog(`Error: Unable to read directory "${dir}"`));
+    console.log(errorLog(err));
     return;
   }
 

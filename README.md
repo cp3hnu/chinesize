@@ -55,11 +55,11 @@ Options:
 `extract` 有 1 个参数和 5 个选项：
 
 - `dir`：汉化的 Angular/React 项目目录
-- `--framework <framework>`：项目类型，`angular` 或 `react`
-- ` --type <type>`：Angular 要转换的文件类型，是 `html` 文件还是 `js/ts` 文件。如果没有提供，则同时转换两者
+- `--framework <framework>`：项目类型，`react` 或 `angular` 
+- ` --type <type>`：Angular 项目要转换的文件类型，是 `html` 文件还是 `js/ts` 文件。如果没有提供，则同时转换两者
 - `--output <filePath>`：输出文件路径，提取的英文文本将写入这个文件。如果没有提供，默认是项目下的 `chinesize/texts-to-translate-{html|js}.json'` 文件
-- `--ignore-pattern <glob...>`：忽略 `glob` 表达式匹配的文件，使用 [`micromatch`](https://github.com/micromatch/micromatch) 进行匹配
-- `--ignore-config <filePath...>`：忽略与配置文件中的模式匹配的文件，使用 [`micromatch`](https://github.com/micromatch/micromatch) 进行匹配
+- `--ignore-pattern <glob...>`：忽略 `glob` 表达式匹配的文件，使用 [`micromatch`](https://github.com/micromatch/micromatch) 进行匹配。例如 `--ignore-pattern **/src/tests/**`
+- `--ignore-config <filePath...>`：忽略与配置文件中的模式匹配的文件，使用 [`micromatch`](https://github.com/micromatch/micromatch) 进行匹配。例如 `--ignore-config ~/Documents/tensorboard/.gitignore`
 
 比如要转换 [`tensorboard`](https://github.com/tensorflow/tensorboard) 项目
 
@@ -131,12 +131,12 @@ Options:
 `replace` 有 1 个参数和 6 个选项：
 
 - `dir`：汉化的 Angular/React 项目目录
-- `--framework <framework>`：项目类型，`angular` 或 `react`，默认 `angular`
+- `--framework <framework>`：项目类型，`react` 或 `angular`
 - ` --type <type>`：Angular 项目要替换的文件类型，是 `html` 文件还是 `js/ts` 文件。如果没有提供，则同时转换两者
 - `--input <filePath>`：中英文翻译的文件路径。如果没有提供，默认是 `extract` 生成的文件路径
 - `--prettier-config <filePath>`：`prettier` 配置文件路径。如果没有提供，则不使用 `prettier` 格式化代码
-- `--ignore-pattern <glob...>`：忽略 `glob` 表达式匹配的文件，使用 [`micromatch`](https://github.com/micromatch/micromatch) 进行匹配
-- `--ignore-config <filePath...>`：忽略与配置文件中的模式匹配的文件，使用 [`micromatch`](https://github.com/micromatch/micromatch) 进行匹配
+- `--ignore-pattern <glob...>`：忽略 `glob` 表达式匹配的文件，使用 [`micromatch`](https://github.com/micromatch/micromatch) 进行匹配。例如 `--ignore-pattern **/src/tests/**`
+- `--ignore-config <filePath...>`：忽略与配置文件中的模式匹配的文件，使用 [`micromatch`](https://github.com/micromatch/micromatch) 进行匹配。例如 `--ignore-config ~/Documents/tensorboard/.gitignore`
 
 比如要转换 [`tensorboard`](https://github.com/tensorflow/tensorboard) 项目
 
