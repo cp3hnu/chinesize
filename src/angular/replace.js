@@ -2,18 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 import replaceHtml from "./replaceHtml.js";
 import replaceTs from "./replaceTs.js";
-import { errorLog } from "./utils.js";
-import { addIgnoreFromInput, addIgnoreFromFile, shouldIgnore, resetIgnore } from "./ignoreFiles.js";
+import { errorLog } from "../utils/log.js";
+import { readJsonFile } from "../utils/io.js";
+import { addIgnoreFromInput, addIgnoreFromFile, shouldIgnore, resetIgnore } from "../utils/ignoreFiles.js";
 
-/**
- * Replace English texts of Angular project to Chinese
- * @param {string} dir The directory of Angular project
- * @param {"html" | "js" | undefined} type the file type
- * @param {string} input The path of file for reading the Chinese text
- * @param {string | undefined} prettierConfig The path of config file for prettier
- * @param {string} ignorePattern The pattern of files that should be ignored
- * @param {string} ignoreConfigFile The path of config file for ignore
- */
 export function replace(dir, type, input, prettierConfig, ignorePattern, ignoreConfigFile) {
   if (!fs.existsSync(dir)) {
     console.log(errorLog(`Error: "${dir}" is not exists`));
@@ -26,9 +18,7 @@ export function replace(dir, type, input, prettierConfig, ignorePattern, ignoreC
     return;
   }
 
-  const defaultFileName = type
-    ? "texts-to-translate-" + type + ".json"
-    : "texts-to-translate.json";
+  const defaultFileName = type ? `texts-to-translate-${type}.json` : "texts-to-translate.json";
   const inputFilePath = input || path.join(dir, "chinesize", defaultFileName);
 
   if (prettierConfig && !fs.existsSync(prettierConfig)) {
@@ -36,15 +26,10 @@ export function replace(dir, type, input, prettierConfig, ignorePattern, ignoreC
     return;
   }
 
-  // Reset ignore patterns
   resetIgnore();
-  
-  // Add ignore patterns
   if (ignorePattern) {
     addIgnoreFromInput(ignorePattern);
   }
-
-  // Add ignore config file
   if (ignoreConfigFile) {
     addIgnoreFromFile(ignoreConfigFile);
   }
@@ -59,10 +44,9 @@ export function replace(dir, type, input, prettierConfig, ignorePattern, ignoreC
     console.log(errorLog(`Error: "${inputFilePath}" is not a file`));
     return;
   }
-  
+
   try {
-    const data = fs.readFileSync(inputFilePath, "utf-8");
-    const translations = JSON.parse(data);
+    const translations = readJsonFile(inputFilePath);
     replaceDir(dir, type, translations, prettierConfig);
   } catch (err) {
     console.log(errorLog(`Error: "${inputFilePath}" is not a valid JSON`));
@@ -70,14 +54,6 @@ export function replace(dir, type, input, prettierConfig, ignorePattern, ignoreC
   }
 }
 
-/**
- * Recursively replaces English texts in a directory with translations.
- *
- * @param {string} dir - The directory to scan for files.
- * @param {"html" | "js"} type - The type of files to replace translations in.
- * @param {object} translations - An object containing translations.
- * @param {string | undefined} prettierConfig The path of config file for prettier
- */
 function replaceDir(dir, type, translations, prettierConfig) {
   fs.readdir(dir, (dirErr, files) => {
     if (dirErr) {
@@ -85,13 +61,11 @@ function replaceDir(dir, type, translations, prettierConfig) {
       console.log(errorLog(dirErr));
       return;
     }
-    files.forEach(file => {
+    files.forEach((file) => {
       const filePath = path.join(dir, file);
       fs.stat(filePath, (err, stat) => {
         if (err) {
-          console.log(
-            errorLog(`Error: Unable to retrieve ${filePath} file stats.`)
-          );
+          console.log(errorLog(`Error: Unable to retrieve ${filePath} file stats.`));
           console.log(errorLog(err));
           return;
         }
@@ -100,16 +74,12 @@ function replaceDir(dir, type, translations, prettierConfig) {
         }
 
         if (stat.isDirectory()) {
-          // Read subdirectories recursively
           replaceDir(filePath, type, translations, prettierConfig);
         } else {
           const extname = path.extname(filePath);
           if (extname === ".html" && (type === undefined || type === "html")) {
             replaceHtml(filePath, translations, prettierConfig);
-          } else if (
-            (extname === ".js" || extname === ".ts") &&
-            (type === undefined || type === "js")
-          ) {
+          } else if ((extname === ".js" || extname === ".ts") && (type === undefined || type === "js")) {
             replaceTs(filePath, translations, prettierConfig);
           }
         }

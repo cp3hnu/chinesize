@@ -1,5 +1,5 @@
 # chinesize
-一个汉化 HTML、Angular 项目的工具
+一个汉化 React、Angular、HTML 模板文本的工具
 
 ## 安装
 
@@ -13,15 +13,15 @@ $ npm install chinesize -g
 $ chinesize --help
 Usage: chinesize [options] [command]
 
-CLI to convert English Angular project to Chinese
+CLI to convert English Angular/React project to Chinese
 
 Options:
   -V, --version            output the version number
   -h, --help               display help for command
 
 Commands:
-  extract [options] <dir>  Extract English texts of Angular project
-  replace [options] <dir>  Replace English texts of Angular project to Chinese
+  extract [options] <dir>  Extract English texts of Angular/React project
+  replace [options] <dir>  Replace English texts of Angular/React project to Chinese
   help [command]           display help for command
 ```
 
@@ -38,12 +38,13 @@ chinesize 提供了两个子命令：
 $ chinesize help extract
 Usage: chinesize extract <dir> [options]
 
-Extract English texts of Angular project
+Extract English texts of Angular/React project
 
 Arguments:
-  dir                            directory of Angular project
+  dir                            directory of Angular/React project
 
 Options:
+	-f, --framework <framework>    framework type (choices: "angular", "react")
   -t, --type <type>              file type (choices: "html", "js")
   -o, --output <filePath>        path of file for writing the extracted English text
   --ignore-pattern <glob...>     ignore files that match a provided glob expression
@@ -51,11 +52,12 @@ Options:
   -h, --help                     display help for command
 ```
 
-`extract` 有 1 个参数和 4 个选项：
+`extract` 有 1 个参数和 5 个选项：
 
-- `dir`：汉化的 Angular 项目目录
-- ` --type <type>`：要转换的文件类型，是 `html` 文件还是 `js/ts` 文件。如果没有提供，则同时转换两者
-- `--output <filePath>`：输出文件路径，提取的英文文本将写入这个文件。如果没有提供，默认是 Angular 项目目录下的 `chinesize/texts-to-translate-{html|js}.json'` 文件
+- `dir`：汉化的 Angular/React 项目目录
+- `--framework <framework>`：项目类型，`angular` 或 `react`
+- ` --type <type>`：Angular 要转换的文件类型，是 `html` 文件还是 `js/ts` 文件。如果没有提供，则同时转换两者
+- `--output <filePath>`：输出文件路径，提取的英文文本将写入这个文件。如果没有提供，默认是项目下的 `chinesize/texts-to-translate-{html|js}.json'` 文件
 - `--ignore-pattern <glob...>`：忽略 `glob` 表达式匹配的文件，使用 [`micromatch`](https://github.com/micromatch/micromatch) 进行匹配
 - `--ignore-config <filePath...>`：忽略与配置文件中的模式匹配的文件，使用 [`micromatch`](https://github.com/micromatch/micromatch) 进行匹配
 
@@ -111,12 +113,13 @@ $ chinesize extract ~/Documents/tensorboard --ignore-config ~/Documents/tensorbo
 $ chinesize help replace
 Usage: chinesize replace <dir> [options]
 
-Replace English texts of Angular project to Chinese
+Replace English texts of Angular/React project to Chinese
 
 Arguments:
-  dir                               directory of Angular project
+  dir                               directory of Angular/React project
 
 Options:
+	-f, --framework <framework>       framework type (choices: "angular", "react")
   -t, --type <type>                 file type (choices: "html", "js")
   -i, --input <filePath>            path of file for reading the Chinese text
   -p, --prettier-config <filePath>  path of config file for prettier
@@ -125,10 +128,11 @@ Options:
   -h, --help                        display help for command
 ```
 
-`replace` 有 1 个参数和 5 个选项：
+`replace` 有 1 个参数和 6 个选项：
 
-- `dir`：汉化的 Angular 项目目录
-- ` --type <type>`：要转换的文件类型，是 `html` 文件还是 `js/ts` 文件。如果没有提供，则同时转换两者
+- `dir`：汉化的 Angular/React 项目目录
+- `--framework <framework>`：项目类型，`angular` 或 `react`，默认 `angular`
+- ` --type <type>`：Angular 项目要替换的文件类型，是 `html` 文件还是 `js/ts` 文件。如果没有提供，则同时转换两者
 - `--input <filePath>`：中英文翻译的文件路径。如果没有提供，默认是 `extract` 生成的文件路径
 - `--prettier-config <filePath>`：`prettier` 配置文件路径。如果没有提供，则不使用 `prettier` 格式化代码
 - `--ignore-pattern <glob...>`：忽略 `glob` 表达式匹配的文件，使用 [`micromatch`](https://github.com/micromatch/micromatch) 进行匹配
